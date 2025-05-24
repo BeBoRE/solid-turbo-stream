@@ -9,7 +9,7 @@ const queryUser = async () => {
     id: 1,
     username: "BeBoRE",
     extraInfo: delay(2000, {
-      bio: "Greatest bio I have ever seen",
+      bio: "Greatest bio you'll have ever seen",
       socials: delay(3000, {
         github: "https://github.com/bebore",
       }),
