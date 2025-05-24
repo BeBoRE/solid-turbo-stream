@@ -17,6 +17,8 @@ const queryUser = async () => {
   };
 };
 
+export { queryUser };
+
 export type User = ReturnType<typeof queryUser>;
 
 export async function GET() {

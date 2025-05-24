@@ -5,14 +5,16 @@ import {
   Suspense,
 } from "solid-js";
 import { decode } from "turbo-stream";
-import { User } from "./api";
+import { queryUser, User } from "./api";
 
 function delay<T>(delay: number, value: T) {
   return new Promise<T>((resolve) => setTimeout(() => resolve(value), delay));
 }
 
 const getUser = async () => {
-  const res = await fetch("http://localhost:3001/api");
+  if (typeof window === "undefined") queryUser();
+
+  const res = await fetch("http://localhost:3000/api");
 
   await delay(1000, undefined);
 
