@@ -1,13 +1,10 @@
-import { A, AccessorWithLatest, createAsync } from "@solidjs/router";
 import {
   createResource,
-  InitializedResourceReturn,
+  InitializedResource,
   ResourceFetcher,
-  ResourceReturn,
   Suspense,
 } from "solid-js";
 import { decode } from "turbo-stream";
-import Counter from "~/components/Counter";
 import { User } from "./api";
 
 const getUser = async () => {
@@ -18,32 +15,26 @@ const getUser = async () => {
   return decode<User>(res.body.pipeThrough(new TextDecoderStream()));
 };
 
-type ToAccessor<T, R> =
+type ToAccessor<T> =
   T extends Promise<infer U>
-    ? InitializedResourceReturn<ToAccessor<U, R> | undefined>
+    ? InitializedResource<ToAccessor<U> | undefined>
     : {
-        [K in keyof T]: ToAccessor<T[K] | undefined, R>;
+        [K in keyof T]: ToAccessor<T[K] | undefined>;
       };
 
 function isPromise<T>(value: unknown): value is Promise<T> {
   return value instanceof Promise;
 }
 
-function toResource<T, R>(value: T): ToAccessor<T, R> {
-  if (isPromise(value)) return createTurbo<T, R>(() => value) as any;
+function toResource<T>(value: T): ToAccessor<T> {
+  if (isPromise(value)) return createTurbo(() => value) as any;
 
   if (typeof value === "object") {
     if (!value) return value as any;
-    const result = { ...value } as Record<string, any>;
+    const result = value as Record<string, unknown>;
 
     for (const [key, objValue] of Object.entries(value)) {
-      if (objValue instanceof Promise) {
-        result[key] = createTurbo(() => objValue) as any;
-      }
-
-      if (objValue && typeof objValue === "object") {
-        result[key] = toResource(objValue);
-      }
+      result[key] = toResource(objValue);
     }
     return result as any;
   }
@@ -52,22 +43,17 @@ function toResource<T, R>(value: T): ToAccessor<T, R> {
 }
 
 function createTurbo<T, R>(fetcher: ResourceFetcher<true, T, R>) {
-  const [data, actions] = createResource(fetcher);
+  const [data] = createResource(fetcher);
 
-  return [
-    () => {
-      const res = data();
+  return () => {
+    const res = data();
 
-      return toResource(res);
-    },
-    actions,
-  ] as const;
+    return toResource(res);
+  };
 }
 
 export default function About() {
-  const [user] = createTurbo(getUser);
-
-  const [info] = user()?.extraInfo || [];
+  const user = createTurbo(getUser);
 
   return (
     <main class="text-center mx-auto text-gray-700 p-4">
@@ -75,7 +61,7 @@ export default function About() {
         {user()?.username}
       </h1>
       <Suspense fallback={<p>Loading...</p>}>
-        <p>{info?.()?.bio}</p>
+        <p>{user()?.extraInfo?.()?.bio}</p>
       </Suspense>
     </main>
   );
