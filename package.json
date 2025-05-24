@@ -1,0 +1,26 @@
+{
+  "name": "example-with-tailwindcss",
+  "type": "module",
+  "scripts": {
+    "dev": "vinxi dev",
+    "build": "vinxi build",
+    "start": "vinxi start",
+    "format": "prettier -w ."
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.15.0",
+    "@solidjs/start": "^1.1.0",
+    "@tanstack/solid-query": "^5.76.2",
+    "solid-js": "^1.9.5",
+    "turbo-stream": "^3.1.0",
+    "vinxi": "^0.5.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.7",
+    "prettier": "^3.5.3",
+    "tailwindcss": "^4.0.7"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
