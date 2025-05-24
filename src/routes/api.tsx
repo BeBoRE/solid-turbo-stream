@@ -20,9 +20,12 @@ const queryUser = async () => {
 export type User = ReturnType<typeof queryUser>;
 
 export async function GET() {
-  const stream = encode(queryUser());
+  const stream = encode(await queryUser());
 
   return new Response(stream, {
-    headers: { "Content-Type": "text/plain" },
+    headers: {
+      "Content-Type": "text/event-stream",
+      "X-Accel-Buffering": "no",
+    },
   });
 }
