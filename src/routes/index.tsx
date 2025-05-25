@@ -14,7 +14,7 @@ function delay<T>(delay: number, value: T) {
 const getUser = async () => {
   if (typeof window === "undefined") queryUser();
 
-  const res = await fetch("http://localhost:3000/api");
+  const res = await fetch("/api");
 
   await delay(1000, undefined);
 
